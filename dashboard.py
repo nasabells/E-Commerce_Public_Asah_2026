@@ -12,12 +12,7 @@ AKHIR_Q2 = pd.Timestamp("2018-08-31 23:59:59")  # data bulanan lengkap sampai Ag
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv(
-        DATA_PATH,
-        parse_dates=["order_purchase_timestamp",
-                     "order_delivered_customer_date",
-                     "order_estimated_delivery_date"],
-    )
+    df = pd.read_csv(DATA_PATH, parse_dates=["order_purchase_timestamp"])
     df["bulan"] = df["order_purchase_timestamp"].dt.to_period("M").astype(str)
     return df
 
@@ -62,7 +57,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.subheader("Top 10 kategori berdasarkan revenue dan jumlah item terjual")
     kategori = (data.groupby("product_category_name_english")
-                .agg(revenue=("price", "sum"), items_sold=("order_item_id", "count"))
+                .agg(revenue=("price", "sum"), items_sold=("price", "count"))
                 .reset_index()
                 .rename(columns={"product_category_name_english": "kategori"}))
     top_rev = kategori.nlargest(10, "revenue")
